@@ -69,15 +69,23 @@ class MainActivity : AppCompatActivity() {
         updateAnswerButtonState()
     }
 
+    private fun getScoreRating() {
+        if (currentIndex == questionBank.size - 1) {
+            val totalScore = questionBank.sumBy { it.score }
+            Toast.makeText(this, "总得分：${totalScore * 100 / questionBank.size}%", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
         questionBank[currentIndex].hasBeenAnswered = true
-        val messageResId = if (userAnswer == correctAnswer) {
-            R.string.correct_toast
-        } else {
-            R.string.incorrect_toast
-        }
+        val isAnswerCorrect = userAnswer == correctAnswer
+
+        val messageResId = if (isAnswerCorrect) R.string.correct_toast else R.string.incorrect_toast
+        questionBank[currentIndex].score = if (isAnswerCorrect) 1 else 0
+
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
+        getScoreRating()
     }
 
     /**
