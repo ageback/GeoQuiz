@@ -70,10 +70,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getScoreRating() {
-        if (currentIndex == questionBank.size - 1) {
-            val totalScore = questionBank.sumBy { it.score }
-            Toast.makeText(this, "总得分：${totalScore * 100 / questionBank.size}%", Toast.LENGTH_SHORT).show()
-        }
+        val totalScore = questionBank.sumBy { it.score }
+        Toast.makeText(this, "总得分：${totalScore * 100 / questionBank.size}%", Toast.LENGTH_SHORT).show()
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
@@ -85,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         questionBank[currentIndex].score = if (isAnswerCorrect) 1 else 0
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
-        getScoreRating()
+        if (currentIndex == questionBank.size - 1) getScoreRating()
     }
 
     /**
