@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -62,17 +61,21 @@ class MainActivity : AppCompatActivity() {
 
         nextButton.setOnClickListener {
             quizViewModel.moveToNext()
+            checkCheatCount()
             updateQuestion()
         }
 
         previousButton.setOnClickListener {
             quizViewModel.moveToPrevious()
+            checkCheatCount()
             updateQuestion()
         }
 
         cheatButton.setOnClickListener {
             val answerIsTrue = quizViewModel.currentQuestionAnswer
             val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            quizViewModel.increaseCheatCount()
+            checkCheatCount()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val options = ActivityOptions.makeClipRevealAnimation(it, 0, 0, it.width, it.height)
                 startActivityForResult(intent, REQUEST_CODE_CHEAT, options.toBundle())
@@ -86,6 +89,10 @@ class MainActivity : AppCompatActivity() {
             updateQuestion()
         }
         updateQuestion()
+    }
+
+    fun checkCheatCount() {
+        cheatButton.isEnabled = !quizViewModel.checkCheatCount()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

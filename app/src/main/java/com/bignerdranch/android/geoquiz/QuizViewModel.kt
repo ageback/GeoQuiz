@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 
 private const val TAG = "QuizViewModel"
+private const val MAX_CHEAT_COUNT = 3
 
 class QuizViewModel : ViewModel() {
 
@@ -29,11 +30,6 @@ class QuizViewModel : ViewModel() {
 
     val isLastQuestion: Boolean get() = currentIndex == questionBank.size - 1
 
-//    val currentAnswerTextResId: Int
-//        get() = when {
-//            currentQuestionAnswer -> R.string.true_button
-//            else -> R.string.false_button
-//        }
 
     fun moveToPrevious() {
         currentIndex = if (currentIndex == 0) questionBank.size - 1
@@ -59,5 +55,16 @@ class QuizViewModel : ViewModel() {
     fun getScoreRating(): Int {
         val totalScore = questionBank.sumBy { it.score }
         return totalScore * 100 / questionBank.size
+    }
+
+    /**
+     * 检查作弊次数是否达到3次。大于等于3次就返回false.
+     */
+    fun checkCheatCount(): Boolean {
+        return questionBank[currentIndex].cheatCount >= 3
+    }
+
+    fun increaseCheatCount(){
+        questionBank[currentIndex].cheatCount++
     }
 }

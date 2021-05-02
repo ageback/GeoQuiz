@@ -7,5 +7,9 @@ data class Question(
     val answer: Boolean,
     var hasBeenAnswered: Boolean = false,
     var score: Int = 0,
-    var isCheater: Boolean = false
+    var isCheater: Boolean = false,
+    /**
+     * 作弊次数，每题最多作弊3次
+     */
+    var cheatCount: Int = 0
 )
