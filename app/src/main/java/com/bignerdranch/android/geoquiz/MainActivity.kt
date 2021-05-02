@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.i(TAG, "onSaveInstanceState")
         outState.putInt(KEY_INDEX, quizViewModel.currentIndex)
     }
 
@@ -50,12 +49,12 @@ class MainActivity : AppCompatActivity() {
 
         trueButton.setOnClickListener { view: View ->
             checkAnswer(true)
-//            updateAnswerButtonState()
+            updateAnswerButtonState()
         }
 
         falseButton.setOnClickListener { view: View ->
             checkAnswer(false)
-//            updateAnswerButtonState()
+            updateAnswerButtonState()
         }
 
         nextButton.setOnClickListener {
@@ -64,8 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         previousButton.setOnClickListener {
-//            currentIndex = if (currentIndex == 0) questionBank.size - 1
-//            else (currentIndex - 1) % questionBank.size
+            quizViewModel.moveToPrevious()
             updateQuestion()
         }
 
@@ -87,18 +85,20 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode != Activity.RESULT_OK) return
         if (requestCode == REQUEST_CODE_CHEAT) {
-            quizViewModel.setCurrentIsCheater(data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false)
+            quizViewModel.setCurrentIsCheater(
+                data?.getBooleanExtra(EXTRA_ANSWER_SHOWN, false) ?: false
+            )
         }
     }
 
     private fun updateQuestion() {
         questionTextView.setText(quizViewModel.currentQuestionText)
-//        updateAnswerButtonState()
+        updateAnswerButtonState()
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = quizViewModel.currentQuestionAnswer
-//        questionBank[currentIndex].hasBeenAnswered = true
+        quizViewModel.setCurrentHasBeenAnswered(true)
         val isAnswerCorrect = userAnswer == correctAnswer
 
         val messageResId = when {
@@ -106,30 +106,27 @@ class MainActivity : AppCompatActivity() {
             isAnswerCorrect -> R.string.correct_toast
             else -> R.string.incorrect_toast
         }
-//        questionBank[currentIndex].score = if (isAnswerCorrect) 1 else 0
+        quizViewModel.setCurrentScore(if (isAnswerCorrect) 1 else 0)
 
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
-//        if (currentIndex == questionBank.size - 1) getScoreRating()
+        if (quizViewModel.isLastQuestion) {
+            val scoreRating = quizViewModel.getScoreRating()
+            Toast.makeText(this, "总得分：$scoreRating%", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
-//    private fun getScoreRating() {
-//        val totalScore = questionBank.sumBy { it.score }
-//        Toast.makeText(this, "总得分：${totalScore * 100 / questionBank.size}%", Toast.LENGTH_SHORT)
-//            .show()
-//    }
-//
 
-//
-//    /**
-//     * 3.8挑战练习：用户答完某道题，就林掉那道题对应的按钮，用户一题多答
-//     */
-//    private fun updateAnswerButtonState() {
-//        if (questionBank[currentIndex].hasBeenAnswered) {
-//            trueButton.isEnabled = false
-//            falseButton.isEnabled = false
-//        } else {
-//            trueButton.isEnabled = true
-//            falseButton.isEnabled = true
-//        }
-//    }
+    /**
+     * 3.8挑战练习：用户答完某道题，就禁掉那道题对应的按钮，用户一题多答
+     */
+    private fun updateAnswerButtonState() {
+        if (quizViewModel.currentQuestionHasBeenAnswered) {
+            trueButton.isEnabled = false
+            falseButton.isEnabled = false
+        } else {
+            trueButton.isEnabled = true
+            falseButton.isEnabled = true
+        }
+    }
 }

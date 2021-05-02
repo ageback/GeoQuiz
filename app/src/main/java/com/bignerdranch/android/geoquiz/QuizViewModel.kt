@@ -1,5 +1,6 @@
 package com.bignerdranch.android.geoquiz
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 
 private const val TAG = "QuizViewModel"
@@ -22,7 +23,11 @@ class QuizViewModel : ViewModel() {
 
     val currentQuestionText: Int get() = questionBank[currentIndex].textResId
 
+    val currentQuestionHasBeenAnswered: Boolean get() = questionBank[currentIndex].hasBeenAnswered
+
     val currentQuestionIsCheater: Boolean get() = questionBank[currentIndex].isCheater
+
+    val isLastQuestion: Boolean get() = currentIndex == questionBank.size - 1
 
 //    val currentAnswerTextResId: Int
 //        get() = when {
@@ -30,11 +35,29 @@ class QuizViewModel : ViewModel() {
 //            else -> R.string.false_button
 //        }
 
+    fun moveToPrevious() {
+        currentIndex = if (currentIndex == 0) questionBank.size - 1
+        else (currentIndex - 1) % questionBank.size
+    }
+
     fun moveToNext() {
         currentIndex = (currentIndex + 1) % questionBank.size
     }
 
     fun setCurrentIsCheater(isCheater: Boolean) {
         questionBank[currentIndex].isCheater = isCheater
+    }
+
+    fun setCurrentHasBeenAnswered(hasBeenAnswered: Boolean) {
+        questionBank[currentIndex].hasBeenAnswered = hasBeenAnswered
+    }
+
+    fun setCurrentScore(score: Int) {
+        questionBank[currentIndex].score = score
+    }
+
+    fun getScoreRating(): Int {
+        val totalScore = questionBank.sumBy { it.score }
+        return totalScore * 100 / questionBank.size
     }
 }
