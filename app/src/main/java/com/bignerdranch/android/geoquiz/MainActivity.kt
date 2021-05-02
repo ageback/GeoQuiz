@@ -73,10 +73,10 @@ class MainActivity : AppCompatActivity() {
         cheatButton.setOnClickListener {
             val answerIsTrue = quizViewModel.currentQuestionAnswer
             val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val options = ActivityOptions.makeClipRevealAnimation(it, 0, 0, it.width, it.height)
                 startActivityForResult(intent, REQUEST_CODE_CHEAT, options.toBundle())
-            } else{
+            } else {
                 startActivityForResult(intent, REQUEST_CODE_CHEAT)
             }
         }
