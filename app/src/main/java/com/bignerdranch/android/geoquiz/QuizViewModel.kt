@@ -1,6 +1,5 @@
 package com.bignerdranch.android.geoquiz
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 
 private const val TAG = "QuizViewModel"
@@ -8,6 +7,7 @@ private const val TAG = "QuizViewModel"
 class QuizViewModel : ViewModel() {
 
     var currentIndex = 0
+
 
     private val questionBank = listOf(
         Question(R.string.question_australia, true),
@@ -22,7 +22,19 @@ class QuizViewModel : ViewModel() {
 
     val currentQuestionText: Int get() = questionBank[currentIndex].textResId
 
+    val currentQuestionIsCheater: Boolean get() = questionBank[currentIndex].isCheater
+
+//    val currentAnswerTextResId: Int
+//        get() = when {
+//            currentQuestionAnswer -> R.string.true_button
+//            else -> R.string.false_button
+//        }
+
     fun moveToNext() {
         currentIndex = (currentIndex + 1) % questionBank.size
+    }
+
+    fun setCurrentIsCheater(isCheater: Boolean) {
+        questionBank[currentIndex].isCheater = isCheater
     }
 }
